@@ -1,0 +1,153 @@
+<?php
+include '../config.php';
+if(!isset($_SESSION['admin'])){
+	header('Location: admin_login.php');
+	exit;
+}
+
+// helper for upload
+function saveImage($file){
+	$allowed = ['image/jpeg','image/png','image/webp'];
+	if(!isset($file) || $file['error'] !== UPLOAD_ERR_OK) return null;
+	if(!in_array($file['type'], $allowed)) return null;
+	$ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+	$name = time() . '_' . bin2hex(random_bytes(6)) . '.' . $ext;
+	$destDir = __DIR__ . '/../assets/images/';
+	if(!is_dir($destDir)) mkdir($destDir, 0755, true);
+	$dest = $destDir . $name;
+	if(move_uploaded_file($file['tmp_name'], $dest)){
+		return 'assets/images/' . $name;
+	}
+	return null;
+}
+
+// Add bike
+if(isset($_POST['add_bike'])){
+	$brand = trim($_POST['brand']);
+	$price = (int)$_POST['price'];
+	$img = saveImage($_FILES['image']);
+	$stmt = mysqli_prepare($conn, "INSERT INTO bikes (brand, price, image) VALUES (?,?,?)");
+	mysqli_stmt_bind_param($stmt, 'sis', $brand, $price, $img);
+	mysqli_stmt_execute($stmt);
+	mysqli_stmt_close($stmt);
+	header('Location: manage_bikes.php');
+	exit;
+}
+
+// Edit bike
+if(isset($_POST['edit_bike'])){
+	$id = (int)$_POST['id'];
+	$brand = trim($_POST['brand']);
+	$price = (int)$_POST['price'];
+	$img = null;
+	if(isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK){
+		$img = saveImage($_FILES['image']);
+	}
+	if($img){
+		$stmt = mysqli_prepare($conn, "UPDATE bikes SET brand=?, price=?, image=? WHERE id=?");
+		mysqli_stmt_bind_param($stmt, 'sisi', $brand, $price, $img, $id);
+	} else {
+		$stmt = mysqli_prepare($conn, "UPDATE bikes SET brand=?, price=? WHERE id=?");
+		mysqli_stmt_bind_param($stmt, 'sii', $brand, $price, $id);
+	}
+	mysqli_stmt_execute($stmt);
+	mysqli_stmt_close($stmt);
+	header('Location: manage_bikes.php');
+	exit;
+}
+
+// Delete bike
+if(isset($_GET['delete'])){
+	$id = (int)$_GET['delete'];
+	// optionally delete image file
+	$r = mysqli_prepare($conn, "SELECT image FROM bikes WHERE id = ?");
+	mysqli_stmt_bind_param($r, 'i', $id);
+	mysqli_stmt_execute($r);
+	mysqli_stmt_bind_result($r, $img_path);
+	if(mysqli_stmt_fetch($r)){
+		$img_file = __DIR__ . '/../' . $img_path;
+		if($img_path && file_exists($img_file)){
+			@unlink($img_file);
+		}
+	}
+	mysqli_stmt_close($r);
+	$stmt = mysqli_prepare($conn, "DELETE FROM bikes WHERE id = ?");
+	mysqli_stmt_bind_param($stmt, 'i', $id);
+	mysqli_stmt_execute($stmt);
+	mysqli_stmt_close($stmt);
+	header('Location: manage_bikes.php');
+	exit;
+}
+
+// fetch for edit
+$editBike = null;
+if(isset($_GET['edit'])){
+	$id = (int)$_GET['edit'];
+	$res = mysqli_prepare($conn, "SELECT * FROM bikes WHERE id = ?");
+	mysqli_stmt_bind_param($res, 'i', $id);
+	mysqli_stmt_execute($res);
+	$editBike = mysqli_fetch_assoc(mysqli_stmt_get_result($res));
+	mysqli_stmt_close($res);
+}
+
+$res = mysqli_query($conn, "SELECT * FROM bikes ORDER BY id ASC");
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/style.css">
+	<style>
+		.admin-wrap{max-width:1000px;margin:20px auto;padding:20px}
+		table{width:100%;border-collapse:collapse}
+		th,td{padding:8px;border:1px solid #ddd;text-align:left}
+		img.thumb{width:120px;height:70px;object-fit:cover;border-radius:6px}
+		form.inline{display:flex;gap:8px;align-items:center}
+		.form-row{margin:10px 0}
+	</style>
+</head>
+<body>
+<div class="admin-wrap">
+	<h2>Manage Bikes</h2>
+	<p><a href="admin_dashboard.php">Back to Dashboard</a> | <a href="admin_change_password.php">Change Password</a> | <a href="../logout.php">Logout</a></p>
+
+	<?php if($editBike): ?>
+		<h3>Edit Bike #<?= (int)$editBike['id'] ?></h3>
+		<form method="POST" enctype="multipart/form-data">
+			<input type="hidden" name="id" value="<?= (int)$editBike['id'] ?>">
+			<div class="form-row">Brand: <input name="brand" value="<?= htmlspecialchars($editBike['brand']) ?>" required></div>
+			<div class="form-row">Price: <input name="price" type="number" value="<?= (int)$editBike['price'] ?>" required></div>
+			<div class="form-row">Image: <input type="file" name="image"></div>
+			<div class="form-row"><button name="edit_bike">Save Changes</button> <a href="manage_bikes.php">Cancel</a></div>
+		</form>
+	<?php else: ?>
+		<h3>Add New Bike</h3>
+		<form method="POST" enctype="multipart/form-data">
+			<div class="form-row">Brand: <input name="brand" required></div>
+			<div class="form-row">Price: <input name="price" type="number" required></div>
+			<div class="form-row">Image: <input type="file" name="image" required></div>
+			<div class="form-row"><button name="add_bike">Add Bike</button></div>
+		</form>
+	<?php endif; ?>
+
+	<h3>Existing Bikes</h3>
+	<table>
+		<tr><th>#</th><th>Image</th><th>Brand</th><th>Price</th><th>Actions</th></tr>
+		<?php $sn = 1; while($row = mysqli_fetch_assoc($res)): ?>
+			<tr>
+				<td><?= $sn++ ?></td>
+				<td><?php if($row['image']): ?><img class="thumb" src="../<?= htmlspecialchars($row['image']) ?>"><?php endif; ?></td>
+				<td><?= htmlspecialchars($row['brand']) ?></td>
+				<td><?= htmlspecialchars($row['price']) ?></td>
+				<td>
+					<a href="?edit=<?= (int)$row['id'] ?>">Edit</a> |
+					<a href="?delete=<?= (int)$row['id'] ?>" onclick="return confirm('Delete this bike?')">Delete</a>
+				</td>
+			</tr>
+		<?php endwhile; ?>
+	</table>
+</div>
+</body>
+</html>
+

@@ -1,0 +1,147 @@
+body { font-family: Arial; background:#eef2f5; margin:0; }
+h1 { text-align:center; padding:20px; }
+
+body.auth-bg { height: 100vh; overflow: hidden; margin: 0; }
+
+.bike-container {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px,1fr));
+  gap:20px;
+  padding:20px;
+}
+
+.bike-card {
+  background:#fff;
+  padding:15px;
+  border-radius:10px;
+  box-shadow:0 4px 10px rgba(0,0,0,.1);
+  text-align:center;
+}
+
+.bike-card img {
+  width:100%;
+  height:180px;
+  object-fit:cover;
+  border-radius:10px;
+}
+
+.btn {
+  background:#ff6600;
+  color:white;
+  padding:10px 15px;
+  text-decoration:none;
+  border-radius:5px;
+  display:inline-block;
+}
+
+/* Hero section */
+.hero{
+  position:relative;
+  min-height:60vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+  background-position:center;
+  background-size:cover;
+}
+.hero-overlay{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.45));
+}
+.hero-content{position:relative; text-align:center; z-index:2; padding:40px;}
+.hero-content h1{font-size:3rem; margin:0 0 10px}
+.hero-content p{font-size:1.1rem; margin:0 0 20px}
+.hero-buttons .btn{margin:0 8px}
+.btn-alt{background:#004aad}
+
+.about{padding:40px 20px; background:#fff}
+.about .container{max-width:1000px;margin:0 auto}
+
+.browse{padding:30px 20px}
+.container{max-width:1100px;margin:0 auto}
+
+@media (max-width:600px){
+  .hero-content h1{font-size:2rem}
+  .bike-card img{height:140px}
+}
+
+/* Auth card styles */
+body.auth-bg{background: linear-gradient(180deg,#eef6ff,#f7fbff);}
+.site-logo{display:block;margin:0 auto 12px;width:140px;height:48px;background:url('../images/logo.png') center/contain no-repeat}
+.auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background: url('../images/harlay.jpg') center/cover no-repeat;}
+.auth-card{width:100%;max-width:460px;background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.85));padding:30px;border-radius:14px;box-shadow:0 20px 50px rgba(8,20,50,0.08);backdrop-filter: blur(6px);border:1px solid rgba(8,20,50,0.04);transform:translateY(0);transition:transform .22s ease,box-shadow .22s ease}
+.auth-card:hover{transform:translateY(-4px);box-shadow:0 30px 70px rgba(8,20,50,0.12)}
+.auth-card h2{margin:0 0 8px;font-size:1.6rem;color:#07213a}
+.auth-card p.lead{margin:0 0 16px;color:#475569}
+.field{width:100%;padding:12px 14px;border:1px solid #e6eef6;border-radius:10px;margin-top:10px;background:#fff;transition:box-shadow .14s ease,border-color .14s ease}
+.field:focus{outline:none;box-shadow:0 6px 20px rgba(3,102,214,0.06);border-color:#007aff}
+.form-row{margin:12px 0}
+.auth-actions{display:flex;align-items:center;justify-content:space-between;margin-top:14px;gap:10px}
+.btn{background:linear-gradient(90deg,#ff7a00,#ff4d00);color:white;padding:10px 16px;text-decoration:none;border-radius:10px;display:inline-block;border:none;font-weight:700;box-shadow:0 8px 18px rgba(255,77,0,0.12);cursor:pointer;transition:transform .12s ease,box-shadow .12s ease}
+.btn:hover{transform:translateY(-2px);box-shadow:0 14px 28px rgba(3,102,214,0.08)}
+.btn.btn-alt{background:linear-gradient(90deg,#0066ff,#004aad);box-shadow:0 8px 18px rgba(0,74,173,0.12)}
+.small-link{color:#004aad;text-decoration:none}
+.success{background:#e6ffed;border:1px solid #8be08c;padding:10px;margin:10px 0;border-radius:8px}
+.error{color:#b00020;margin:8px 0}
+
+
+@media (max-width:480px){
+  .auth-card{padding:18px;border-radius:10px}
+}
+
+/* Sidebar + main layout for admin */
+.admin-container{display:flex;gap:20px;max-width:1200px;margin:24px auto;padding:12px}
+.sidebar{width:250px;background:#fff;padding:18px;border-radius:10px;box-shadow:0 8px 20px rgba(20,30,60,.04)}
+.sidebar h3{margin:0 0 12px;color:#102a43}
+.sidebar nav a{display:block;padding:10px 12px;margin-bottom:8px;color:#102a43;text-decoration:none;border-radius:8px;border:1px solid transparent}
+.sidebar nav a:hover{background:#f1f7ff;border-color:#e2eefc}
+.sidebar nav a.active{background:#004aad;color:#fff;border-color:#003a8c}
+.main{flex:1}
+
+@media (max-width:900px){
+  .admin-container{flex-direction:column;padding:10px}
+  .sidebar{width:100%}
+}
+
+/* Enhanced stat card visuals, badges and chart */
+.stat-card{background:#fff;padding:16px;border-radius:10px;box-shadow:0 12px 30px rgba(2,6,23,0.06);display:flex;flex-direction:column}
+.stat-card .row{display:flex;align-items:center;gap:12px}
+.stat-card .icon{width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;border-radius:10px;background:linear-gradient(135deg,#f5f8ff,#eef6ff)}
+.stat-card .num{font-size:1.6rem;font-weight:700;color:#102a43}
+.stat-card .label{color:#486581;margin-top:6px}
+
+.badge{display:inline-block;padding:6px 10px;border-radius:999px;font-weight:700;color:#fff}
+.badge.pending{background:#ffb020}
+.badge.confirmed{background:#16a34a}
+.badge.denied{background:#ef4444}
+
+.card h3{display:flex;align-items:center;gap:10px}
+.recent-table td.status{font-weight:600}
+.chart-wrap{background:#fff;padding:16px;border-radius:10px;box-shadow:0 12px 30px rgba(2,6,23,0.04);margin-bottom:18px}
+
+@media (max-width:700px){
+  .stat-card .num{font-size:1.25rem}
+}
+
+/* User dashboard styles */
+.dashboard{max-width:1100px;margin:20px auto;padding:18px}
+.dashboard-header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px}
+.dashboard-header h1{margin:0;font-size:1.6rem}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:18px}
+.card{background:#fff;padding:14px;border-radius:10px;box-shadow:0 10px 26px rgba(8,20,50,0.04)}
+.bookings-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px}
+.booking-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px;border-radius:8px;border:1px solid #f0f4f8;background:#fff}
+.booking-meta{display:flex;flex-direction:column}
+.booking-meta .title{font-weight:700;color:#102a43}
+.booking-meta .dates{color:#526278;font-size:0.95rem}
+.btn.small{background:#ef4444;padding:6px 8px;border-radius:6px;color:#fff;border:none}
+.btn.small:hover{opacity:.95}
+.muted{color:#6b7785;font-size:0.95rem}
+
+@media (max-width:600px){
+  .dashboard-header{flex-direction:column;align-items:flex-start}
+  .booking-item{flex-direction:column;align-items:flex-start}
+}
+
