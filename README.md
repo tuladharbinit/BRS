@@ -17,4 +17,4 @@ password- 123456
 1
 name-Itachi Uchiha
 email- test@gmail.com
-password- test@12345
+password- 123456
