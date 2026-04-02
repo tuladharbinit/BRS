@@ -22,6 +22,12 @@ if(isset($_GET['delete'])){
   mysqli_stmt_bind_param($d, 'i', $id);
   mysqli_stmt_execute($d);
   mysqli_stmt_close($d);
+
+  // Append to SQL file
+  $sql_file = __DIR__ . '/../sql/bikerentalbt.sql';
+  $delete_sql = "DELETE FROM users WHERE id = " . $id . ";\n";
+  file_put_contents($sql_file, $delete_sql, FILE_APPEND);
+
   // Reset auto_increment to fill gaps
   $next_id_query = "SELECT COALESCE( (SELECT MIN(a.id + 1) FROM users a LEFT JOIN users b ON a.id + 1 = b.id WHERE b.id IS NULL), (SELECT MAX(id)+1 FROM users), 1 ) AS next_id";
   $result = mysqli_query($conn, $next_id_query);

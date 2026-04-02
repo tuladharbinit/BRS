@@ -55,6 +55,11 @@ mysqli_stmt_bind_param($u2, 'sii', $cancelled_status, $bid, $user_id);
 mysqli_stmt_execute($u2);
 mysqli_stmt_close($u2);
 
+// Append to SQL file
+$sql_file = __DIR__ . '/sql/bikerentalbt.sql';
+$update_sql = "UPDATE bookings SET status = 'cancelled' WHERE id = " . $bid . ";\n";
+file_put_contents($sql_file, $update_sql, FILE_APPEND);
+
 header('Location: dashboard.php?cancel=success');
 exit;
 

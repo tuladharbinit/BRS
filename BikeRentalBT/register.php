@@ -62,6 +62,11 @@ if(isset($_POST['register'])){
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
 
+    // Append to SQL file for data persistence
+    $sql_file = __DIR__ . '/sql/bikerentalbt.sql';
+    $insert_sql = "INSERT INTO users (name,email,password,contact_number,document) VALUES ('" . mysqli_real_escape_string($conn, $name) . "','" . mysqli_real_escape_string($conn, $email) . "','" . mysqli_real_escape_string($conn, $hash) . "','" . mysqli_real_escape_string($conn, $contact) . "','" . mysqli_real_escape_string($conn, $docname) . "');\n";
+    file_put_contents($sql_file, $insert_sql, FILE_APPEND);
+
     header("Location: login.php?registered=1");
     exit;
   }

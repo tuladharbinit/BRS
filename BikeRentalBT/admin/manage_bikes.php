@@ -25,11 +25,21 @@ function saveImage($file){
 if(isset($_POST['add_bike'])){
 	$brand = trim($_POST['brand']);
 	$price = (int)$_POST['price'];
+	if($price < 0){
+		echo "<script>alert('Price cannot be negative'); window.location='manage_bikes.php';</script>";
+		exit;
+	}
 	$img = saveImage($_FILES['image']);
 	$stmt = mysqli_prepare($conn, "INSERT INTO bikes (brand, price, image) VALUES (?,?,?)");
 	mysqli_stmt_bind_param($stmt, 'sis', $brand, $price, $img);
 	mysqli_stmt_execute($stmt);
 	mysqli_stmt_close($stmt);
+
+	// Append to SQL file for data persistence
+	$sql_file = __DIR__ . '/../sql/bikerentalbt.sql';
+	$insert_sql = "INSERT INTO bikes (brand, price, image) VALUES ('" . mysqli_real_escape_string($conn, $brand) . "'," . $price . ",'" . mysqli_real_escape_string($conn, $img) . "');\n";
+	file_put_contents($sql_file, $insert_sql, FILE_APPEND);
+
 	header('Location: manage_bikes.php');
 	exit;
 }
@@ -39,6 +49,10 @@ if(isset($_POST['edit_bike'])){
 	$id = (int)$_POST['id'];
 	$brand = trim($_POST['brand']);
 	$price = (int)$_POST['price'];
+	if($price < 0){
+		echo "<script>alert('Price cannot be negative'); window.location='manage_bikes.php?edit=" . $id . "';</script>";
+		exit;
+	}
 	$img = null;
 	if(isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK){
 		$img = saveImage($_FILES['image']);
@@ -52,6 +66,16 @@ if(isset($_POST['edit_bike'])){
 	}
 	mysqli_stmt_execute($stmt);
 	mysqli_stmt_close($stmt);
+
+	// Append to SQL file
+	$sql_file = __DIR__ . '/../sql/bikerentalbt.sql';
+	if($img){
+		$update_sql = "UPDATE bikes SET brand='" . mysqli_real_escape_string($conn, $brand) . "', price=" . $price . ", image='" . mysqli_real_escape_string($conn, $img) . "' WHERE id=" . $id . ";\n";
+	} else {
+		$update_sql = "UPDATE bikes SET brand='" . mysqli_real_escape_string($conn, $brand) . "', price=" . $price . " WHERE id=" . $id . ";\n";
+	}
+	file_put_contents($sql_file, $update_sql, FILE_APPEND);
+
 	header('Location: manage_bikes.php');
 	exit;
 }
@@ -75,6 +99,12 @@ if(isset($_GET['delete'])){
 	mysqli_stmt_bind_param($stmt, 'i', $id);
 	mysqli_stmt_execute($stmt);
 	mysqli_stmt_close($stmt);
+
+	// Append to SQL file
+	$sql_file = __DIR__ . '/../sql/bikerentalbt.sql';
+	$delete_sql = "DELETE FROM bikes WHERE id = " . $id . ";\n";
+	file_put_contents($sql_file, $delete_sql, FILE_APPEND);
+
 	header('Location: manage_bikes.php');
 	exit;
 }
@@ -113,7 +143,7 @@ $res = mysqli_query($conn, "SELECT * FROM bikes ORDER BY id ASC");
 	<p><a href="admin_dashboard.php">Back to Dashboard</a> | <a href="admin_change_password.php">Change Password</a> | <a href="../logout.php">Logout</a></p>
 
 	<?php if($editBike): ?>
-		<h3>Edit Bike #<?= (int)$editBike['id'] ?></h3>
+		<h3>Edit Bike #<?= (int)$editBike['id'] ?></h3>min="0" 
 		<form method="POST" enctype="multipart/form-data">
 			<input type="hidden" name="id" value="<?= (int)$editBike['id'] ?>">
 			<div class="form-row">Brand: <input name="brand" value="<?= htmlspecialchars($editBike['brand']) ?>" required></div>
@@ -125,7 +155,7 @@ $res = mysqli_query($conn, "SELECT * FROM bikes ORDER BY id ASC");
 		<h3>Add New Bike</h3>
 		<form method="POST" enctype="multipart/form-data">
 			<div class="form-row">Brand: <input name="brand" required></div>
-			<div class="form-row">Price: <input name="price" type="number" required></div>
+			<div class="form-row">Price: <input name="price" type="number" min="0" required></div>
 			<div class="form-row">Image: <input type="file" name="image" required></div>
 			<div class="form-row"><button name="add_bike">Add Bike</button></div>
 		</form>

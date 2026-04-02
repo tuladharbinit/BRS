@@ -24,6 +24,7 @@ $recent = mysqli_query($conn, "SELECT bookings.id, users.name AS user_name, bike
 FROM bookings
 JOIN users ON bookings.user_id = users.id
 JOIN bikes ON bookings.bike_id = bikes.id
+WHERE DATE_FORMAT(bookings.date_from, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m')
 ORDER BY bookings.id DESC LIMIT 8");
 // bookings per month (last 6 months)
 $monthly = mysqli_query($conn, "SELECT DATE_FORMAT(date_from, '%Y-%m') AS ym, COUNT(*) AS cnt FROM bookings GROUP BY ym ORDER BY ym DESC LIMIT 6");

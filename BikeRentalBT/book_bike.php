@@ -55,6 +55,12 @@ if(isset($_POST['book'])){
         mysqli_stmt_bind_param($stmt, 'iisss', $user_id, $bike_id, $from, $to, $pending_status);
         mysqli_stmt_execute($stmt);
         mysqli_stmt_close($stmt);
+
+        // Append to SQL file for data persistence
+        $sql_file = __DIR__ . '/sql/bikerentalbt.sql';
+        $insert_sql = "INSERT INTO bookings (user_id,bike_id,date_from,date_to,status) VALUES (" . $user_id . "," . $bike_id . ",'" . mysqli_real_escape_string($conn, $from) . "','" . mysqli_real_escape_string($conn, $to) . "','" . mysqli_real_escape_string($conn, $pending_status) . "');\n";
+        file_put_contents($sql_file, $insert_sql, FILE_APPEND);
+
         header('Location: dashboard.php?book=success');
         exit;
       }

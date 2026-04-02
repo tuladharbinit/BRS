@@ -20,12 +20,22 @@ if(isset($_POST['action'])){
     mysqli_stmt_bind_param($stmt, 'si', $confirmed, $id);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
+
+    // Append to SQL file
+    $sql_file = __DIR__ . '/../sql/bikerentalbt.sql';
+    $update_sql = "UPDATE bookings SET status = 'confirmed' WHERE id = " . $id . ";\n";
+    file_put_contents($sql_file, $update_sql, FILE_APPEND);
   } elseif($action === 'deny'){
     $stmt = mysqli_prepare($conn, "UPDATE bookings SET status = ? WHERE id = ?");
     $denied = 'denied';
     mysqli_stmt_bind_param($stmt, 'si', $denied, $id);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
+
+    // Append to SQL file
+    $sql_file = __DIR__ . '/../sql/bikerentalbt.sql';
+    $update_sql = "UPDATE bookings SET status = 'denied' WHERE id = " . $id . ";\n";
+    file_put_contents($sql_file, $update_sql, FILE_APPEND);
   } elseif($action === 'cancel'){
     // Check if booking is still active (date_to not passed)
     $check_stmt = mysqli_prepare($conn, "SELECT date_to FROM bookings WHERE id = ? AND status = ?");
@@ -40,6 +50,11 @@ if(isset($_POST['action'])){
         mysqli_stmt_bind_param($stmt, 'si', $cancelled, $id);
         mysqli_stmt_execute($stmt);
         mysqli_stmt_close($stmt);
+
+        // Append to SQL file
+        $sql_file = __DIR__ . '/../sql/bikerentalbt.sql';
+        $update_sql = "UPDATE bookings SET status = 'cancelled' WHERE id = " . $id . ";\n";
+        file_put_contents($sql_file, $update_sql, FILE_APPEND);
       }
     }
     mysqli_stmt_close($check_stmt);
