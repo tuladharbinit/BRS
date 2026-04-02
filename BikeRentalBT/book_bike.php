@@ -38,17 +38,25 @@ if(isset($_POST['book'])){
     } elseif($from > $to){
       $error = 'The start date must be before or equal to the end date.';
     } else {
-      // check for overlapping confirmed bookings
-      $conf = mysqli_prepare($conn, "SELECT COUNT(*) FROM bookings WHERE bike_id = ? AND status = ? AND NOT (date_to < ? OR date_from > ?)");
-      $confirmed_status = 'confirmed';
-      mysqli_stmt_bind_param($conf, 'isss', $bike_id, $confirmed_status, $from, $to);
-      mysqli_stmt_execute($conf);
-      mysqli_stmt_bind_result($conf, $cnt);
-      mysqli_stmt_fetch($conf);
-      mysqli_stmt_close($conf);
+      // check for overlapping active bookings (pending or confirmed)
+      $stmt_check = mysqli_prepare($conn, "SELECT date_from, date_to, status FROM bookings WHERE bike_id = ? AND status IN ('pending', 'confirmed') AND NOT (date_to < ? OR date_from > ?) ORDER BY date_from");
+      mysqli_stmt_bind_param($stmt_check, 'iss', $bike_id, $from, $to);
+      mysqli_stmt_execute($stmt_check);
+      $result_check = mysqli_stmt_get_result($stmt_check);
+      
+      $conflicting_dates = [];
+      while($row = mysqli_fetch_assoc($result_check)){
+        $conflicting_dates[] = $row;
+      }
+      mysqli_stmt_close($stmt_check);
 
-      if($cnt > 0){
-        $error = 'Selected bike is not available for those dates.';
+      if(count($conflicting_dates) > 0){
+        $error = 'This bike is not available for the following dates: ';
+        $parts = [];
+        foreach($conflicting_dates as $booking){
+          $parts[] = "{$booking['date_from']} to {$booking['date_to']}";
+        }
+        $error .= implode(', ', $parts) . '.';
       } else {
         $pending_status = 'pending';
         $stmt = mysqli_prepare($conn, "INSERT INTO bookings(user_id,bike_id,date_from,date_to,status) VALUES(?,?,?,?,?)");

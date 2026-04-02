@@ -129,7 +129,6 @@ $res = mysqli_query($conn, "SELECT * FROM bikes ORDER BY id ASC");
 	<meta name="viewport" content="width=device-width,initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/style.css">
 	<style>
-		.admin-wrap{max-width:1000px;margin:20px auto;padding:20px}
 		table{width:100%;border-collapse:collapse}
 		th,td{padding:8px;border:1px solid #ddd;text-align:left}
 		img.thumb{width:120px;height:70px;object-fit:cover;border-radius:6px}
@@ -138,12 +137,30 @@ $res = mysqli_query($conn, "SELECT * FROM bikes ORDER BY id ASC");
 	</style>
 </head>
 <body>
-<div class="admin-wrap">
-	<h2>Manage Bikes</h2>
-	<p><a href="admin_dashboard.php">Back to Dashboard</a> | <a href="admin_change_password.php">Change Password</a> | <a href="../logout.php">Logout</a></p>
 
+<div class="admin-container">
+  <aside class="sidebar">
+    <h3>Admin Panel</h3>
+    <nav>
+      <a href="admin_dashboard.php" class="nav-link">Dashboard</a>
+      <a href="manage_bikes.php" class="nav-link active">Manage Bikes</a>
+      <a href="manage_bookings.php" class="nav-link">Manage Bookings</a>
+      <a href="manage_users.php" class="nav-link">Manage Users</a>
+    </nav>
+    <div style="margin-top:14px;border-top:1px solid #f1f5f9;padding-top:12px;color:#486581">Logged in as<br><strong><?= htmlspecialchars($_SESSION['admin']) ?></strong><br><a class="small-link" href="admin_change_password.php">Change Password</a> | <a class="small-link" href="../logout.php">Logout</a></div>
+  </aside>
+
+  <main class="main">
+    <div class="admin-header">
+      <div>
+        <h2 class="admin-title">Manage Bikes</h2>
+        <div style="color:#486581">Add, edit, and manage bike inventory</div>
+      </div>
+    </div>
+
+    <div class="card">
 	<?php if($editBike): ?>
-		<h3>Edit Bike #<?= (int)$editBike['id'] ?></h3>min="0" 
+		<h3>Edit Bike #<?= (int)$editBike['id'] ?></h3>
 		<form method="POST" enctype="multipart/form-data">
 			<input type="hidden" name="id" value="<?= (int)$editBike['id'] ?>">
 			<div class="form-row">Brand: <input name="brand" value="<?= htmlspecialchars($editBike['brand']) ?>" required></div>
@@ -167,9 +184,9 @@ $res = mysqli_query($conn, "SELECT * FROM bikes ORDER BY id ASC");
 		<?php $sn = 1; while($row = mysqli_fetch_assoc($res)): ?>
 			<tr>
 				<td><?= $sn++ ?></td>
-				<td><?php if($row['image']): ?><img class="thumb" src="../<?= htmlspecialchars($row['image']) ?>"><?php endif; ?></td>
+				<td><?php if($row['image']): ?><img class="thumb" src="../<?= htmlspecialchars($row['image']) ?>" alt="Bike image"><?php endif; ?></td>
 				<td><?= htmlspecialchars($row['brand']) ?></td>
-				<td><?= htmlspecialchars($row['price']) ?></td>
+				<td>NPR <?= htmlspecialchars($row['price']) ?></td>
 				<td>
 					<a href="?edit=<?= (int)$row['id'] ?>">Edit</a> |
 					<a href="?delete=<?= (int)$row['id'] ?>" onclick="return confirm('Delete this bike?')">Delete</a>
@@ -177,7 +194,16 @@ $res = mysqli_query($conn, "SELECT * FROM bikes ORDER BY id ASC");
 			</tr>
 		<?php endwhile; ?>
 	</table>
+    </div>
+  </main>
 </div>
+
+<script>
+// highlight nav
+var links = document.querySelectorAll('.sidebar .nav-link');
+links.forEach(function(a){ if(a.getAttribute('href') === window.location.pathname.split('/').pop()){ a.classList.add('active'); } });
+</script>
+
 </body>
 </html>
 

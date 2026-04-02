@@ -51,29 +51,56 @@ if(!$res){
   <style>table{width:100%;border-collapse:collapse}.thumb{width:140px;height:80px;object-fit:cover;border-radius:6px}th,td{padding:8px;border:1px solid #eee;text-align:left}</style>
 </head>
 <body>
-<div style="max-width:1100px;margin:24px auto;padding:12px">
-  <h2>Registered Users</h2>
-  <p><a href="admin_dashboard.php">Back to Dashboard</a> | <a href="admin_change_password.php">Change Password</a></p>
 
-  <table>
-    <tr><th>ID</th><th>Name</th><th>Email</th><th>Contact</th><th>Document</th><th>Action</th></tr>
-    <?php while($u = mysqli_fetch_assoc($res)): ?>
-      <tr>
-        <td><?= (int)$u['id'] ?></td>
-        <td><?= htmlspecialchars($u['name']) ?></td>
-        <td><?= htmlspecialchars($u['email']) ?></td>
-        <td><?= htmlspecialchars($u['contact_number']) ?></td>
-        <td>
-          <?php if($u['document']): ?>
-            <a href="../uploads/<?= htmlspecialchars($u['document']) ?>" target="_blank">View</a>
-          <?php else: ?>
-            -
-          <?php endif; ?>
-        </td>
-        <td><a href="?delete=<?= (int)$u['id'] ?>" onclick="return confirm('Delete this user?')">Delete</a></td>
-      </tr>
-    <?php endwhile; ?>
-  </table>
+<div class="admin-container">
+  <aside class="sidebar">
+    <h3>Admin Panel</h3>
+    <nav>
+      <a href="admin_dashboard.php" class="nav-link">Dashboard</a>
+      <a href="manage_bikes.php" class="nav-link">Manage Bikes</a>
+      <a href="manage_bookings.php" class="nav-link">Manage Bookings</a>
+      <a href="manage_users.php" class="nav-link active">Manage Users</a>
+    </nav>
+    <div style="margin-top:14px;border-top:1px solid #f1f5f9;padding-top:12px;color:#486581">Logged in as<br><strong><?= htmlspecialchars($_SESSION['admin']) ?></strong><br><a class="small-link" href="admin_change_password.php">Change Password</a> | <a class="small-link" href="../logout.php">Logout</a></div>
+  </aside>
+
+  <main class="main">
+    <div class="admin-header">
+      <div>
+        <h2 class="admin-title">Manage Users</h2>
+        <div style="color:#486581">View and manage registered users</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <table>
+        <tr><th>ID</th><th>Name</th><th>Email</th><th>Contact</th><th>Document</th><th>Action</th></tr>
+        <?php while($u = mysqli_fetch_assoc($res)): ?>
+          <tr>
+            <td><?= (int)$u['id'] ?></td>
+            <td><?= htmlspecialchars($u['name']) ?></td>
+            <td><?= htmlspecialchars($u['email']) ?></td>
+            <td><?= htmlspecialchars($u['contact_number']) ?></td>
+            <td>
+              <?php if($u['document']): ?>
+                <a href="../uploads/<?= htmlspecialchars($u['document']) ?>" target="_blank">View</a>
+              <?php else: ?>
+                -
+              <?php endif; ?>
+            </td>
+            <td><a href="?delete=<?= (int)$u['id'] ?>" onclick="return confirm('Delete this user?')">Delete</a></td>
+          </tr>
+        <?php endwhile; ?>
+      </table>
+    </div>
+  </main>
 </div>
+
+<script>
+// highlight nav
+var links = document.querySelectorAll('.sidebar .nav-link');
+links.forEach(function(a){ if(a.getAttribute('href') === window.location.pathname.split('/').pop()){ a.classList.add('active'); } });
+</script>
+
 </body>
 </html>
