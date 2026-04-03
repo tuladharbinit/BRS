@@ -61,3 +61,4 @@ INSERT INTO bookings (user_id,bike_id,date_from,date_to,status) VALUES (2,2,'202
 UPDATE bookings SET status = 'confirmed' WHERE id = 3;
 INSERT INTO bookings (user_id,bike_id,date_from,date_to,status) VALUES (3,7,'2026-04-04','2026-04-06','pending');
 UPDATE bookings SET status = 'confirmed' WHERE id = 4;
+INSERT INTO bikes (brand, price, image) VALUES ('TVS Ntorq 125',1400,'assets/images/1775214016_7bd183f5daa3.webp');

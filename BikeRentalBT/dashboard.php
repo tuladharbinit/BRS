@@ -17,7 +17,7 @@ mysqli_stmt_close($stmt);
 <!DOCTYPE html>
 <html>
 <head>
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/style.css?v=2">
   <style>
     .available-bikes { margin-top: 40px; }
     .bikes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; margin-top: 20px; }
@@ -149,5 +149,6 @@ mysqli_stmt_close($stmt);
       <?php } ?>
     </div>
   </div>
+
 </body>
 </html>

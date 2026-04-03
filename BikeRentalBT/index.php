@@ -3,7 +3,7 @@
 <html>
 <head>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/style.css?v=2">
 </head>
 <body>
 <header class="hero" style="background-image:url('assets/images/hero.jpg')">
@@ -18,15 +18,6 @@
     </div>
   </div>
 </header>
-
-<section class="about">
-  <div class="container">
-    <h2>About BikeRentalBT</h2>
-    <p>BikeRentalBT makes renting a bike simple and affordable. Choose from a selection of well-maintained bikes, upload your license, and book for the days you need.</p>
-    <p>Contact Us : 9818123456</p>
-    <p>Address: Thamel, Kathmandu</p>
-  </div>
-</section>
 
 <section class="browse">
   <div class="container">
@@ -52,6 +43,41 @@
     </div>
     <?php } ?>
     </div>
+  </div>
+</section>
+
+<section class="dark-footer">
+  <div class="footer-grid">
+    <div class="footer-col">
+      <h3>About BikeRentalBT</h3>
+      <p>When it comes to motorbike hire and tours in general BikeRentalBT has been a household name in the game whether it be just renting a bike or scooter</p>
+    </div>
+    
+    <div class="footer-col">
+      <h3>Address</h3>
+      <p>Thamel, Kathmandu</p>
+      <p>P: +977 01-5348111</p>
+      <p>E: bikerentalbt@gmail.com</p>
+    </div>
+    
+    <div class="footer-col">
+      <h3>Required Documents for Foreign Citizens</h3>
+      <ul>
+        <li>Visa Valid Passport</li>
+        <li>Driving License Compulsory. (Better If You've International Driving Licences)</li>
+      </ul>
+    </div>
+    
+    <div class="footer-col">
+      <h3>Required Documents for Neplease Citizens</h3>
+      <ul>
+        <li>Valid Passport or Citizenship</li>
+        <li>Driving License (Compulsory)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="copyright">
+    <p>&copy; <?php echo date('Y'); ?> BikeRentalBT. All rights reserved.</p>
   </div>
 </section>
 
